@@ -1,0 +1,3 @@
+[workspace]
+members = ["chapt1_hello_world", "chapt2_guessing_game", "chapt3_variables"]
+
