@@ -7,6 +7,48 @@ fn main() {
     // 生成第 n 个斐波那契数
     let n = 100;
     println!("第{}的斐波那契数是 {}", n, fibonacci(n));
+
+    print();
+}
+
+// 打印圣诞颂歌
+fn print() {
+    let week = [
+        "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth",
+        "tenth", "eleventh", "twelfth",
+    ];
+
+    let song: [String; 12] = [
+        "a partridge in a pear tree.".to_owned(),
+        "Two turtle doves,".to_owned(),
+        "Three French hens,".to_owned(),
+        "Four calling birds,".to_owned(),
+        "Five golden rings,".to_owned(),
+        "Six geese a-laying,".to_owned(),
+        "Seven swans a-swimming,".to_owned(),
+        "Eight maids a-milking,".to_owned(),
+        "Nine ladies dancing,".to_owned(),
+        "Ten lords a-leaping,".to_owned(),
+        "Eleven pipers piping,".to_owned(),
+        "Twelve drummers drumming,".to_owned(),
+    ];
+
+    for (index, context) in song.iter().enumerate() {
+        println!("On the {} day of Christmas,", week[index]);
+        println!("my true love gave to me");
+        if index == 0 {
+            println!("A partridge in a pear tree.");
+        } else {
+            println!("{}", context);
+            for j in (0..index).rev() {
+                if j == 0 && j != 0 {
+                    println!("And");
+                }
+                println!("{}", song[j]);
+            }
+        }
+        println!();
+    }
 }
 
 // 生成第 n 个斐波那契数
