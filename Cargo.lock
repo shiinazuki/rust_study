@@ -40,6 +40,13 @@ name = "chapt6_enum_match"
 version = "0.1.0"
 
 [[package]]
+name = "chapt7_crate"
+version = "0.1.0"
+dependencies = [
+ "rand",
+]
+
+[[package]]
 name = "getrandom"
 version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
