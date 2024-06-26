@@ -3,6 +3,10 @@
 version = 3
 
 [[package]]
+name = "a_standard"
+version = "0.1.0"
+
+[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -29,6 +33,10 @@ version = "0.1.0"
 
 [[package]]
 name = "chapt5_struct"
+version = "0.1.0"
+
+[[package]]
+name = "chapt6_enum_match"
 version = "0.1.0"
 
 [[package]]
