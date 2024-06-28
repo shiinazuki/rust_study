@@ -1,3 +1,6 @@
+use chapt8_collections::vect;
+
 fn main() {
-    println!("Hello, world!");
+    vect::study_vec();    
+    vect::enum_more();
 }
