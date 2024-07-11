@@ -1302,14 +1302,14 @@ fn main() {
     }
     assert_eq!(v, [1, 40, 30, 1, 60, 50]);
 
-    // rsplitn() 返回子片段的迭代器，该迭代器由匹配 pred 的元素分隔，最多只能返回 n 个项目。 
+    // rsplitn() 返回子片段的迭代器，该迭代器由匹配 pred 的元素分隔，最多只能返回 n 个项目。
     // 该迭代器从分片的末尾开始向后迭代。 子片段中不包含匹配的元素
     let v = [10, 40, 30, 20, 60, 50];
     for group in v.rsplitn(2, |num| *num % 3 == 0) {
         println!("rsplitn={:?}", group);
     }
 
-    // rsplitn_mut() 返回子片段的迭代器，该迭代器由匹配 pred 的元素分隔，最多只能返回 n 个项目。 
+    // rsplitn_mut() 返回子片段的迭代器，该迭代器由匹配 pred 的元素分隔，最多只能返回 n 个项目。
     // 该迭代器从分片的末尾开始向后迭代。 子片段中不包含匹配的元素。
     let mut s = [10, 40, 30, 20, 60, 50];
     for group in s.rsplitn_mut(2, |num| *num % 3 == 0) {
@@ -1330,8 +1330,7 @@ fn main() {
     assert!(v.iter().any(|e| e == "hello"));
     assert!(!v.iter().any(|e| e == "hi"));
 
-
-    // starts_with() 如果slice 是切片的前缀或等于切片，则返回 true。
+    // starts_with() 如果参数是切片的前缀或等于切片，则返回 true。
     let v = [10, 40, 30];
     assert!(v.starts_with(&[10]));
     assert!(v.starts_with(&[10, 40]));
@@ -1341,13 +1340,412 @@ fn main() {
 
     // 如果slice是空切片，总是返回 true
     let v = &[10, 40, 30];
-    assert!(v.start_with(&[]));
+    assert!(v.starts_with(&[]));
     let v: &[u8] = &[];
     assert!(v.starts_with(&[]));
 
+    // ends_with()  如果参数是切片的后缀或等于切片，则返回 true。
+    let v = [10, 40, 30];
+    assert!(v.ends_with(&[30]));
+    assert!(v.ends_with(&[40, 30]));
+    assert!(v.ends_with(&v));
+    assert!(!v.ends_with(&[50]));
+    assert!(!v.ends_with(&[50, 30]));
+
+    // 如果参数是空切片，则总是返回 true
+    let v = &[10, 40, 30];
+    assert!(v.ends_with(&[]));
+    let v: &[u8] = &[];
+    assert!(v.ends_with(&[]));
+
+    // strip_prefix() 返回去掉前缀的子片
+    // 如果片段以前缀开始，则返回前缀后的子片段，并用 Some 包装。 如果前缀为空，则只返回原始片段。 如果前缀等于原始切片，则返回空切片
+    // 如果切片不以前缀开头，则返回 None
+    let v = &[10, 40, 30];
+    assert_eq!(v.strip_prefix(&[10]), Some(&[40, 30][..]));
+    assert_eq!(v.strip_prefix(&[10, 40]), Some(&[30][..]));
+    assert_eq!(v.strip_prefix(&[10, 40, 30]), Some(&[][..]));
+    assert_eq!(v.strip_prefix(&[50]), None);
+    assert_eq!(v.strip_prefix(&[10, 50]), None);
+
+    let prefix: &str = "he";
+    assert_eq!(
+        b"hello".strip_prefix(prefix.as_bytes()),
+        Some(b"llo".as_ref())
+    );
+
+    // strip_suffix()  返回去掉后缀的子片段
+    // 如果切片以 suffix 结尾，则返回 suffix 之前的子切片，并用 Some 包装
+    // 如果后缀为空，则只返回原始片段。 如果后缀等于原始切片，则返回空切片
+    // 如果切片不以后缀结尾，则返回 None
+    let v = &[10, 40, 30];
+    assert_eq!(v.strip_suffix(&[30]), Some(&[10, 40][..]));
+    assert_eq!(v.strip_suffix(&[40, 30]), Some(&[10][..]));
+    assert_eq!(v.strip_suffix(&[10, 40, 30]), Some(&[][..]));
+    assert_eq!(v.strip_suffix(&[50]), None);
+    assert_eq!(v.strip_suffix(&[50, 30]), None);
+
+    // binary_search() 二进制搜索此切片中的给定元素。 如果切片未排序，返回的结果将是未指定的，也没有意义
+    let s = [0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
+    assert_eq!(s.binary_search(&13), Ok(9));
+    assert_eq!(s.binary_search(&4), Err(7));
+    assert_eq!(s.binary_search(&100), Err(13));
+    let r = s.binary_search(&1);
+    assert!(match r {
+        Ok(1..=4) => true,
+        _ => false,
+    });
+
+    // 如果要查找整个匹配项范围，而不是任意匹配项，可以使用 partition_point 来实现
+    let s = [0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
+
+    let low = s.partition_point(|x| x < &1);
+    assert_eq!(low, 1);
+    let high = s.partition_point(|x| x <= &1);
+    assert_eq!(high, 5);
+    let r = s.binary_search(&1);
+    assert!((low..high).contains(&r.unwrap()));
+
+    assert!(s[..low].iter().all(|&x| x < 1));
+    assert!(s[low..high].iter().all(|&x| x == 1));
+    assert!(s[high..].iter().all(|&x| x > 1));
+
+    // 对于未找到的内容，相等项目的 "范围 "为空
+    assert_eq!(s.partition_point(|x| x < &11), 9);
+    assert_eq!(s.partition_point(|x| x <= &11), 9);
+    assert_eq!(s.binary_search(&11), Err(9));
+
+    // 如果要在保持排序顺序的情况下向排序向量中插入一个项目，可以考虑使用 partition_point
+    let mut s = vec![0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
+    let num = 42;
+    let idx = s.partition_point(|&x| x <= num);
+    // 如果 `num` 是唯一的，`s.partition_point(|&x|x < num)`（使用 `<`）等同于
+    // `s.binary_search(&num).unwrap_or_else(|x| x)`，
+    // 但使用 `<=`   `insert`  移位的元素更少
+    s.insert(idx, num);
+    let mut s = vec![0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 42, 55];
+
+    // binary_search_by()  使用比较器函数对该切片进行二分搜索
+    let s = [0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
+    let seek = 13;
+    assert_eq!(s.binary_search_by(|probe| probe.cmp(&seek)), Ok(9));
+    let seek = 4;
+    assert_eq!(s.binary_search_by(|probe| probe.cmp(&seek)), Err(7));
+    let seek = 100;
+    assert_eq!(s.binary_search_by(|probe| probe.cmp(&seek)), Err(13));
+    let seek = 1;
+    let r = s.binary_search_by(|probe| probe.cmp(&seek));
+    assert!(match r {
+        Ok(1..=4) => true,
+        _ => false,
+    });
+
+    // binary_search_by_key() 使用密钥提取功能对该切片进行二进制搜索
+    // 假设切片已按键排序，例如使用相同的键提取函数按 sort_by_key 排序。 如果切片没有按键排序，返回的结果将是未指定的，也没有意义
+    let s = [
+        (0, 0),
+        (2, 1),
+        (4, 1),
+        (5, 1),
+        (3, 1),
+        (1, 2),
+        (2, 3),
+        (4, 5),
+        (5, 8),
+        (3, 13),
+        (1, 21),
+        (2, 34),
+        (4, 55),
+    ];
+
+    assert_eq!(s.binary_search_by_key(&13, |&(a, b)| b), Ok(9));
+    assert_eq!(s.binary_search_by_key(&4, |&(a, b)| b), Err(7));
+    assert_eq!(s.binary_search_by_key(&100, |&(a, b)| b), Err(13));
+    let r = s.binary_search_by_key(&1, |&(a, b)| b);
+    assert!(match r {
+        Ok(1..=4) => true,
+        _ => false,
+    });
+
+    // sort_unstable() 对片段排序，但可能不保留相等元素的顺序
+    // 这种排序方式不稳定（即可能对相等的元素重新排序），就地排序（即不分配），最坏情况下为 O(n * log(n))
+    let mut v = [-5, 4, -3, 1, -3, 2];
+    v.sort_unstable();
+    assert!(v == [-5, -3, -3, 1, 2, 4]);
+
+    // sort_unstable_by() 使用比较器函数对片段排序，但可能无法保留相等元素的顺序
+    // 这种排序方式不稳定（即可能对相等的元素重新排序），就地排序（即不分配），最坏情况下为 O(n * log(n))
+    // 虽然 f64 不会因为 NaN != NaN 而实现 Ord，但当我们知道片段不包含 NaN 时，我们可以使用 partial_cmp 作为排序函数
+    let mut floats = [5f64, 4.0, 1.0, 3.0, 2.0];
+    floats.sort_unstable_by(|a, b| a.partial_cmp(b).unwrap());
+    assert_eq!(floats, [1.0, 2.0, 3.0, 4.0, 5.0]);
+
+    let mut v = [5, 4, 1, 3, 2];
+    v.sort_unstable_by(|a, b| a.cmp(b));
+    assert_eq!(v, [1, 2, 3, 4, 5]);
+
+    // 降序排序
+    v.sort_unstable_by(|a, b| b.cmp(a));
+    assert_eq!(v, [5, 4, 3, 2, 1]);
+
+    // sort_unstable_by_key() 使用键提取函数对片段排序，但可能无法保留相等元素的顺序
+    // 这种排序方式不稳定（即可能对相等的元素重新排序），就地排序（即不分配），最坏情况下为 O(m * n * log(n))，其中关键函数为 O(m)
+    let mut v = [-5i32, 4, 1, -3, 2];
+    v.sort_unstable_by_key(|k| k.abs());
+    assert_eq!(v, [1, 2, -3, 4, -5]);
+
+    // select_nth_unstable() 对切片重新排序，使重新排序后索引处的元素位于最终排序位置
+    let mut v = [-5i32, 4, 2, -3, 1];
+    // 找出小于或等于中位数、中位数和大于或等于 // 中位数的项目
+    let (lesser, median, greater) = v.select_nth_unstable(2);
+    assert!(lesser == [-3, -5] || lesser == [-5, -3]);
+    assert_eq!(median, &mut 1);
+    assert!(greater == [4, 2] || greater == [2, 4]);
+
+    // 根据我们对指定索引进行排序的方式  我们只能保证切片是以下其中之一
+    assert!(
+        v == [-3, -5, 1, 2, 4]
+            || v == [-5, -3, 1, 2, 4]
+            || v == [-3, -5, 1, 4, 2]
+            || v == [-5, -3, 1, 4, 2]
+    );
+
+    // select_nth_unstable_by() 使用比较器函数对切片重新排序，使重新排序后索引处的元素处于最终排序位置
+    let mut v = [-5_i32, 4, 2, -3, 1];
+    let (lesser, median, greater) = v.select_nth_unstable_by(2, |a, b| b.cmp(a));
+
+    assert!(lesser == [4, 2] || lesser == [2, 4]);
+    assert_eq!(median, &mut 1);
+    assert!(greater == [-3, -5] || greater == [-5, -3]);
+
+    assert!(
+        v == [2, 4, 1, -5, -3]
+            || v == [2, 4, 1, -3, -5]
+            || v == [4, 2, 1, -5, -3]
+            || v == [4, 2, 1, -3, -5]
+    );
+
+    // select_nth_unstable_by_key() 使用键提取函数对切片重新排序，使重新排序后索引处的元素处于最终排序位置。
+    let mut v = [-5_i32, 4, 2, -3, 1];
+    let (lesser, median, greater) = v.select_nth_unstable_by_key(2, |a| a.abs());
+    assert!(lesser == [1, 2] || lesser == [2, 1]);
+    assert_eq!(median, &mut -3);
+    assert!(greater == [4, -5] || greater == [-5, 4]);
+
+    assert!(
+        v == [1, 2, -3, 4, -5]
+            || v == [1, 2, -3, -5, 4]
+            || v == [2, 1, -3, 4, -5]
+            || v == [2, 1, -3, -5, 4]
+    );
+
+    // rotate_left() 就地旋转切片，使切片的第一个中间元素移动到末端，而最后一个 self.len() - 中间元素移动到前端。
+    // 调用 rotate_left 后，之前位于索引 mid 的元素将成为切片中的第一个元素。
+    let mut a = ['a', 'b', 'c', 'd', 'e', 'f'];
+    // a.rotate_left(1);  //['b', 'c', 'd', 'e', 'f', 'a']
+    a.rotate_left(2);
+    assert_eq!(a, ['c', 'd', 'e', 'f', 'a', 'b']);
+
+    // 旋转切片
+    let mut a = ['a', 'b', 'c', 'd', 'e', 'f'];
+    a[1..5].rotate_left(1);
+    assert_eq!(a, ['a', 'c', 'd', 'e', 'b', 'f']);
+
+    // rotate_right() 就地旋转切片，使切片的前 self.len() - k 个元素移动到末尾，而后 k 个元素移动到前端。
+    // 调用 rotate_right 后，之前位于 self.len() - k 索引处的元素将成为片中的第一个元素。
+    let mut a = ['a', 'b', 'c', 'd', 'e', 'f'];
+    a.rotate_right(2);
+    assert_eq!(a, ['e', 'f', 'a', 'b', 'c', 'd']);
+
+    // 旋转切片
+    let mut a = ['a', 'b', 'c', 'd', 'e', 'f'];
+    a[1..5].rotate_right(1);
+    assert_eq!(a, ['a', 'e', 'b', 'c', 'd', 'f']);
+
+    // fill() 通过克隆值将元素填充到自身中
+    let mut buf = vec![0; 10];
+    buf.fill(1);
+    assert_eq!(buf, [1; 10]);
+
+    // fill_with() 用重复调用闭包返回的元素填充自身。
+    // 此方法使用闭包创建新值。 如果你想克隆一个给定的值，可以使用 fill。
+    // 如果想使用 Default 特质生成值，可以将 Default::default 作为参数传递。
+    let mut buf = vec![1; 10];
+    buf.fill_with(Default::default);
+    assert_eq!(buf, [0; 10]);
+
+    // clone_from_slice() 将 src 中的元素复制到 self 中，src 的长度必须与 self 相同
+    let src = [1, 2, 3, 4];
+    let mut dst = [0, 0];
+
+    // 因为切片的长度必须相同，所以我们将源切片从四个元素切成两个  如果不这样做，程序就会崩溃。
+    dst.clone_from_slice(&src[2..]);
+
+    assert_eq!(src, [1, 2, 3, 4]);
+    assert_eq!(dst, [3, 4]);
+
+    // Rust 强制规定，在特定作用域中的特定数据块只能有一个可变引用，而不能有不可变引用。
+    // 因此，在单个片上尝试使用 clone_from_slice 会导致编译失败：
+    // 为了解决这个问题，我们可以使用 split_at_mut 从一个切片中创建两个不同的子切片：
+    let mut slice = [1, 2, 3, 4, 5];
+    {
+        let (left, right) = slice.split_at_mut(2);
+        left.clone_from_slice(&right[1..]);
+        println!("left = {:?}, right = {:?}", left, right);
+    }
+
+    assert_eq!(slice, [4, 5, 3, 4, 5]);
+
+    // copy_from_slice() 使用 memcpy 将 src 中的所有元素复制到 self 中。 src 的长度必须与 self 相同。
+    // 如果 T 没有实现 Copy，请使用 clone_from_slice。
+    let src = [1, 2, 3, 4];
+    let mut dst = [0, 0];
+
+    dst.copy_from_slice(&src[2..]);
+
+    assert_eq!(src, [1, 2, 3, 4]);
+    assert_eq!(dst, [3, 4]);
+
+    let mut slice = [1, 2, 3, 4, 5];
+    {
+        let (left, right) = slice.split_at_mut(2);
+        left.copy_from_slice(&right[1..]);
+    }
+    assert_eq!(slice, [4, 5, 3, 4, 5]);
+
+    // copy_within() dest 是要复制到的自身范围的起始索引，其长度与 src 相同。
+    // 这两个范围可能会重叠。 两个范围的两端必须小于或等于 self.len()。
+    let mut bytes = *b"Hello, World!";
+    // 意思是从第一个参数的范围 拷贝到第二个参数的位置  替换掉原来的元素 总长度不能大于自身的长度
+    bytes.copy_within(0..6, 7);
+    assert_eq!(&bytes, b"Hello, Hello,");
+
+    // swap_with_slice() 将自我中的所有元素与他人中的元素互换，他人的长度必须与自我相同
+    let mut slice1 = [0, 0];
+    let mut slice2 = [1, 2, 3, 4];
+    slice1.swap_with_slice(&mut slice2[2..]);
+    assert_eq!(slice1, [3, 4]);
+    assert_eq!(slice2, [1, 2, 0, 0]);
+
+    let mut slice = [1, 2, 3, 4, 5];
+    {
+        let (left, right) = slice.split_at_mut(2);
+        left.swap_with_slice(&mut right[1..]);
+    }
+    assert_eq!(slice, [4, 5, 3, 1, 2]);
+
+    // align_to() 将切片转换为另一种类型的切片，确保类型保持一致
+    // 该方法将切片分割成三个不同的切片：前缀、正确对齐的新类型中间切片和后缀切片。 在给定的对齐约束和元素大小下，中间部分将尽可能大。
+    // 当输入元素 T 或输出元素 U 的大小均为零时，此方法没有任何作用，它会返回原始切片，而不会分割任何内容
+
+    unsafe {
+        let bytes: [u8; 7] = [1, 2, 3, 4, 5, 6, 7];
+        let (prefix, shorts, suffix) = bytes.align_to::<u16>();
+        println!(
+            "prefix={:?}, shorts={:?}, suffix={:?}",
+            prefix, shorts, suffix
+        );
+    }
+
+    // align_to_mut() 将可变片段转换为另一种类型的可变片段，确保类型保持一致
+    unsafe {
+        let mut bytes: [u8; 7] = [1, 2, 3, 4, 5, 6, 7];
+        let (prefix, shorts, suffix) = bytes.align_to_mut::<u16>();
+        println!(
+            "prefix={:?}, shorts={:?}, suffix={:?}",
+            prefix, shorts, suffix
+        );
+    }
+
+    // partition_point() 根据给定的闭包（第二个分区第一个元素的索引）返回分区点的索引。
+    // 片段假定是根据给定的闭包划分的 这意味着谓词返回 true 的所有元素都位于切片的起点，而闭包返回 false 的所有元素都位于切片的终点
+    // 例如，[7, 15, 3, 5, 4, 12, 6] 是根据闭包 x % 2 != 0 分割的（所有奇数都在开头，所有偶数都在结尾）。
+    // 如果该切片未被分割，返回的结果将是不明确的，也没有意义，因为该方法执行的是二分查找
+    let v = [1, 2, 3, 3, 5, 6, 7];
+    let i = v.partition_point(|&x| x < 5);
+    assert_eq!(i, 4);
+    assert!(v[..i].iter().all(|&x| x < 5));
+    assert!(v[i..].iter().all(|&x| !(x < 5)));
+
+    // 如果片段的所有元素都符合闭包，包括片段为空，那么将返回片段的长度
+    let a = [2, 4, 8];
+    assert_eq!(a.partition_point(|x| x < &100), a.len());
+    let a: [i32; 0] = [];
+    assert_eq!(a.partition_point(|x| x < &100), 0);
+
+    // 如果要在保持排序顺序的情况下，向已排序Vec中插入一个项目
+    let mut s = vec![0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
+    let num = 42;
+    let idx = s.partition_point(|&x| x <= num);
+    s.insert(idx, num);
+    assert_eq!(s, [0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 42, 55]);
+
+    // sort() 对片段进行排序。 这种排序是稳定的（即不对相等的元素重新排序），最坏情况下为 O(n * log(n)) 。
+    // 如果适用，不稳定排序是首选，因为它通常比稳定排序更快，而且不分配辅助内存。 参见 sort_unstable
+    let mut v = [-5, 4, 1, -3, 2];
+    v.sort();
+    assert_eq!(v, [-5, -3, 1, 2, 4]);
+
+    // sort_by() 使用比较器函数对切片排序 这种排序是稳定的（即不会对相等的元素重新排序），最坏情况下为 O(n * log(n))
+    let mut floats = [5f64, 4.0, 1.0, 3.0, 2.0];
+    floats.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    assert_eq!(floats, [1.0, 2.0, 3.0, 4.0, 5.0]);
+
+    let mut v = [5, 4, 1, 3, 2];
+    v.sort_by(|a, b| a.cmp(b));
+    assert_eq!(v, [1, 2, 3, 4, 5]);
+
+    // 降序排序
+    v.sort_by(|a, b| b.cmp(a));
+    assert_eq!(v, [5, 4, 3, 2, 1]);
+
+    // sort_by_key() 使用键提取功能对切片进行排序 这种排序是稳定的（即不会对相等的元素重新排序），最坏情况下为 O(m*n*log(n))，其中关键函数为 O(m)。
+    let mut v = [-5_i32, 4, 1, -3, 2];
+
+    v.sort_by_key(|k| k.abs());
+    assert_eq!(v, [1, 2, -3, 4, -5]);
+
+    // sort_by_cached_key() 使用键提取功能对切片进行排序。
+    // 在排序过程中，通过使用临时存储来记忆键值评估的结果，每个元素最多调用一次键值函数。
+    // 键函数的调用顺序未作规定，可能会在标准库的未来版本中发生变化
+    let mut v = [-5i32, 4, 32, -3, 2];
+    v.sort_by_cached_key(|k| k.to_string());
+    assert_eq!(v, [-3, -5, 2, 32, 4]);
+
+    // to_vec() 将自己复制到一个新的 Vec 中
+    let s = [10, 40, 30];
+    let _x = s.to_vec();
+
+    // repeat() 将一个片段复制 n 次，创建一个Vec
+    assert_eq!([1, 2].repeat(3), vec![1, 2, 1, 2, 1, 2]);
+    let v = [10, 20, 30];
+    let re = v.repeat(2);
+    assert_eq!(re, [10, 20, 30, 10, 20, 30]);
+
+    // concat() 将 T 的片段扁平化为单个值 Self::Output
+    assert_eq!(["hello", "world"].concat(), "helloworld");
+    assert_eq!([[1, 2], [3, 4]].concat(), [1, 2, 3, 4]);
+
+
+    // join() 将 T 的片段扁平化为单个值 Self::Output，在每个值之间放置给定的分隔符
+    assert_eq!(["hello", "world"].join(" "), "hello world");
+    assert_eq!([[1, 2], [3, 4]].join(&0), [1, 2, 0, 3, 4]);
+    assert_eq!([[1, 2], [3, 4]].join(&[0,0][..]), [1, 2, 0, 0, 3, 4]);
+
+    // clone_from() 用源代码内容的克隆值覆盖 self 的内容
+    let x = vec![5, 6, 7];
+    let mut y = vec![8, 9, 10];
+    let yp: *const i32 = y.as_ptr();
+    y.clone_from(&x);
+    assert_eq!(x, y);
+    assert_eq!(yp, y.as_ptr());
+
+    let _v = Vec::from(&[1, 2, 3][..]);
+    let _x = vec![1, 2, 3];
+
 
 }
-fn from_iter_fallible<T>(iter: impl Iterator<Item=T>) -> Result<Vec<T>, TryReserveError> {
+fn from_iter_fallible<T>(iter: impl Iterator<Item = T>) -> Result<Vec<T>, TryReserveError> {
     let mut vec = Vec::new();
     for value in iter {
         if let Err(value) = vec.push_within_capacity(value) {
