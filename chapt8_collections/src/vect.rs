@@ -52,6 +52,7 @@ pub fn study_vec() {
     }
 }
 
+#[derive(Debug)]
 enum SpreadsheetCell {
     Int(i32),
     Float(f64),
@@ -65,4 +66,6 @@ pub fn enum_more() {
         SpreadsheetCell::Text(String::from("blue")),
         SpreadsheetCell::Float(10.32),
     ];
+
+    println!("{:?}", row);
 }
