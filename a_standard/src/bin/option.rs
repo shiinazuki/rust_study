@@ -1,6 +1,5 @@
 #![feature(option_get_or_insert_default)]
 
-use std::{clone, env, fs};
 
 /** Option 枚举 方法  */
 
@@ -41,7 +40,7 @@ fn main() {
     let text = Some("Hello, world!".to_string());
     // 首先，使用 `as_ref` 将 `Option<String>` 转换为 `Option<&String>`、
     // 然后用 `map` 读取 *that* ，把 `text` 留在堆栈上。
-    let text_length = text.as_ref().map(|s| s.len());
+    let _text_length = text.as_ref().map(|s| s.len());
     println!("still can print text: {:?}", text);
 
     // as_mut() Converts from &mut Option<T> to Option<&mut T> 把内容 变为可变引用

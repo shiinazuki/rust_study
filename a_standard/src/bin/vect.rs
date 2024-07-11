@@ -15,7 +15,6 @@ use std::alloc::{alloc, AllocError, Allocator, Global, Layout, System};
 use std::cell::Cell;
 use std::collections::TryReserveError;
 use std::io::{Read, Write};
-use std::ops::Add;
 use std::ptr;
 use std::{io, mem};
 
@@ -155,7 +154,7 @@ fn main() {
 
     // new_in(alloc: A) 构造一个新的空 Vec<T,A>  夜间版方法
     // 在将元素推入向量之前，向量不会分配。
-    let mut vec: Vec<i32, _> = Vec::new_in(System);
+    let mut _vec: Vec<i32, _> = Vec::new_in(System);
 
     //  with_capacity_in(capacity: usize, alloc: A) 夜间版方法
     // 使用提供的分配器构造一个新的空 Vec<T，A>，其容量至少为指定值。
@@ -1423,7 +1422,7 @@ fn main() {
     // `s.binary_search(&num).unwrap_or_else(|x| x)`，
     // 但使用 `<=`   `insert`  移位的元素更少
     s.insert(idx, num);
-    let mut s = vec![0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 42, 55];
+    let mut _s = vec![0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 42, 55];
 
     // binary_search_by()  使用比较器函数对该切片进行二分搜索
     let s = [0, 1, 1, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
@@ -1458,10 +1457,10 @@ fn main() {
         (4, 55),
     ];
 
-    assert_eq!(s.binary_search_by_key(&13, |&(a, b)| b), Ok(9));
-    assert_eq!(s.binary_search_by_key(&4, |&(a, b)| b), Err(7));
-    assert_eq!(s.binary_search_by_key(&100, |&(a, b)| b), Err(13));
-    let r = s.binary_search_by_key(&1, |&(a, b)| b);
+    assert_eq!(s.binary_search_by_key(&13, |&(_a, b)| b), Ok(9));
+    assert_eq!(s.binary_search_by_key(&4, |&(_a, b)| b), Err(7));
+    assert_eq!(s.binary_search_by_key(&100, |&(_a, b)| b), Err(13));
+    let r = s.binary_search_by_key(&1, |&(_a, b)| b);
     assert!(match r {
         Ok(1..=4) => true,
         _ => false,
