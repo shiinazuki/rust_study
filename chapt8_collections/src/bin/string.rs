@@ -1,5 +1,4 @@
-use chapt8_collections::string::study_string;
-
+use chapt8_collections::string as str1;
 fn main() {
-    study_string();
+    str1::study_string();
 }
