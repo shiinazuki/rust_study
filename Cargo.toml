@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "a_standard", "chapt10_trait",
+    "a_standard", "chapt10_trait", "chapt11_test", "chapt12_io_item",
     "chapt1_hello_world",
     "chapt2_guessing_game",
     "chapt3_variables",
