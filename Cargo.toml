@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "a_standard", "chapt10_trait", "chapt11_test", "chapt12_io_item",
+    "a_standard", "chapt10_trait", "chapt11_test", "chapt12_io_item", "chapt13_closures_iterators",
     "chapt1_hello_world",
     "chapt2_guessing_game",
     "chapt3_variables",
@@ -11,3 +11,5 @@ members = [
     "chapt8_collections",
     "chapt9_error",
 ]
+
+resolver = "1"

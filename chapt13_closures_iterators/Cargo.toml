@@ -1,0 +1,6 @@
+[package]
+name = "chapt13_closures_iterators"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
