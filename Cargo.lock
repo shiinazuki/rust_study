@@ -21,6 +21,10 @@ name = "chapt11_test"
 version = "0.1.0"
 
 [[package]]
+name = "chapt12_io_item"
+version = "0.1.0"
+
+[[package]]
 name = "chapt1_hello_world"
 version = "0.1.0"
 

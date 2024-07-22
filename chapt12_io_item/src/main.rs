@@ -1,3 +1,14 @@
+use std::{env, process};
+
 fn main() {
-    println!("Hello, world!");
+    let args: Vec<String> = env::args().collect();
+    // run(&args).unwrap_or_else(|err| {
+    //     println!("Problen parsing arguments: {}", err);
+    //     process::exit(1);
+    // });
+
+    if let Err(e) = chapt12_io_item::run(&args) {
+        eprintln!("Problen parsing arguments: {}", e);
+        process::exit(1);
+    }
 }
