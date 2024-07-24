@@ -1,10 +1,10 @@
 use std::{env, error::Error, fs};
 
-pub fn run(args: &[String]) -> Result<(), Box<dyn Error>> {
+pub fn run(args: impl Iterator<Item = String>) -> Result<(), Box<dyn Error>> {
     reult(args)
 }
 
-fn reult(args: &[String]) -> Result<(), Box<dyn Error>> {
+fn reult(args: impl Iterator<Item = String>) -> Result<(), Box<dyn Error>> {
     let args = Args::build(args)?;
 
     let contents = fs::read_to_string(format!("./chapt12_io_item/{}", args.file_path))?;
@@ -52,12 +52,17 @@ struct Args {
 }
 
 impl Args {
-    fn build(args: &[String]) -> Result<Args, &'static str> {
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
-        let query = args[1].clone();
-        let file_path = args[2].clone();
+    fn build(mut args: impl Iterator<Item = String>) -> Result<Args, &'static str> {
+        args.next();
+
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a query string"),
+        };
+        let file_path = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a file path"),
+        };
 
         let ignore_case = env::var("IGNORE_CASE").is_ok();
 
