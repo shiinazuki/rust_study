@@ -4,7 +4,7 @@ members = [
     "chapt10_trait",
     "chapt11_test",
     "chapt12_io_item",
-    "chapt13_closures_iterators",
+    "chapt13_closures_iterators", "chapt14_cargo",
     "chapt1_hello_world",
     "chapt2_guessing_game",
     "chapt3_variables",
@@ -17,3 +17,10 @@ members = [
 ]
 
 resolver = "1"
+
+
+[profile.dev]
+opt-level = 0
+
+[profile.release]
+opt-level = 3
