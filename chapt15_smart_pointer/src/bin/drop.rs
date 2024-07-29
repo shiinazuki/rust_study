@@ -6,7 +6,7 @@ fn main() {
         data: String::from("my stuff"),
     };
 
-    let d = CustomSmartPointer {
+    let _d = CustomSmartPointer {
         data: String::from("other stuff"),
     };
     println!("CustomSmartPointers created.");
