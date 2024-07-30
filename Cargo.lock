@@ -37,6 +37,10 @@ name = "chapt15_smart_pointer"
 version = "0.1.0"
 
 [[package]]
+name = "chapt16_concurrent_program"
+version = "0.1.0"
+
+[[package]]
 name = "chapt1_hello_world"
 version = "0.1.0"
 
