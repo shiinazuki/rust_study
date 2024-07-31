@@ -49,6 +49,10 @@ name = "chapt18_patterns"
 version = "0.1.0"
 
 [[package]]
+name = "chapt19_advance_feature"
+version = "0.1.0"
+
+[[package]]
 name = "chapt1_hello_world"
 version = "0.1.0"
 
