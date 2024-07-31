@@ -4,7 +4,7 @@ members = [
     "chapt10_trait",
     "chapt11_test",
     "chapt12_io_item",
-    "chapt13_closures_iterators", "chapt14_cargo", "chapt15_smart_pointer", "chapt16_concurrent_program", "chapt17_rust_object",
+    "chapt13_closures_iterators", "chapt14_cargo", "chapt15_smart_pointer", "chapt16_concurrent_program", "chapt17_rust_object", "chapt18_patterns",
     "chapt1_hello_world",
     "chapt2_guessing_game",
     "chapt3_variables",
