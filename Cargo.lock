@@ -61,6 +61,10 @@ name = "chapt1_hello_world"
 version = "0.1.0"
 
 [[package]]
+name = "chapt20_web_server"
+version = "0.1.0"
+
+[[package]]
 name = "chapt2_guessing_game"
 version = "0.1.0"
 dependencies = [
